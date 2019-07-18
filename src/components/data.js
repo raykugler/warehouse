@@ -353,10 +353,7 @@ export function openStagingArea(e){
 
 }
 
-export function routeInput(){
-    let newRoute = document.getElementById("changeRouteButton").value; 
-    console.log(`new: ${newRoute}`)
-}
+
 
 export function routeStager(e){
     let modal = document.getElementById('plannedRoutes');
