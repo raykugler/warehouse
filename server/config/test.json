@@ -1,0 +1,6 @@
+{
+  "jwtPrivateKey": "test",
+  "bcrypt": {
+    "hashRounds": 1
+  }
+}
