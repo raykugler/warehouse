@@ -34,7 +34,7 @@ class StageModal extends React.Component {
             onAfterOpen={this.props.afterOpenModal}
             onRequestClose={this.props.closeModal}
             style={customStyles}
-            contentLabel="Example Modal"
+            contentLabel="Stage Modal"
             routeInput={this.props.routeInput}
           >
               <section className='modalStyle' id='routeModal'>
@@ -49,13 +49,9 @@ class StageModal extends React.Component {
               </section>
               </section>
               <button onClick={this.props.closeModal}>close</button>
-       
-        
-
-</Modal>        
-
+      </Modal>        
 </div>
       );
   }}
-  
+
     export default StageModal;

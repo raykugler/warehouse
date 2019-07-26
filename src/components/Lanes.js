@@ -9,6 +9,7 @@ class Lanes extends Component {
 
 
     createLanes = (e,f)=>{
+
         for ( let i = 2; i < 52; i+=4){
             let number = i;
             let laneTwo = document.getElementById(e)
@@ -60,7 +61,9 @@ class Lanes extends Component {
             laneTwo.appendChild(stagingArea);
         }
         }
+fillLanes=()=>{
 
+}
     componentDidMount=()=>{
         this.createLanes('laneTwoHolder','laneOneHolder');
     }

@@ -1,9 +1,6 @@
 export function createRoute(location, dsp, routeNumber){
     console.log('create route');
 }
-
-
-
 let staging_area_data = [
     {location: 50,
         routes:[

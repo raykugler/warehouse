@@ -1,3 +1,8 @@
+$location-color: #304269;
+$route-banner-color: #91BED4;
+$route-button: #F26101; 
+
+
 .laneTwoMain{
     grid-column: 1/4;
     grid-row: 1/-1;
@@ -15,7 +20,7 @@
 .stagingArea{
     height: 80px;
     width: 100%;
-    background-color: red;
+    background-color: $location-color;
     border: 1px solid palegoldenrod;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
@@ -30,7 +35,8 @@
     font-family: 'Poppins';
     background: none;
 	color: inherit;
-	border: none;
+    border: none;
+    color: white;
 	padding: 0;
 }
 
@@ -40,7 +46,8 @@
     text-align: center;
     font-family: 'Poppins';
     background: none;
-	color: inherit;
+    color: inherit;
+    color: white;
 	border: none;
 	padding: 0;
 }
@@ -48,21 +55,21 @@
 .plannedRoutes{
     grid-column: 2/-1;
     grid-row: 1/2;
-background-color:green;
+background-color:#91BED4;
 }
 .movedRoutes{
     grid-column: 2/-1;
     grid-row: 2/3;
-    background-color: pink;
+    background-color: #D9E8F5;
 }
 
 .laneOnePlannedRoutes{
     grid-column: 1/-2;
     grid-row: 1/2;
-background-color:green;
+    background-color:#91BED4;
 }
 .laneOneMovedRoutes{
     grid-column: 1/-2;
     grid-row: 2/3;
-    background-color: pink;
+    background-color: #D9E8F5;
 }
