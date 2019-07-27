@@ -303,7 +303,6 @@ let staging_area_data = [
      ]
         },    
     ]
-
 let openRouteData = [
     {route: 'CV42'}
 ]

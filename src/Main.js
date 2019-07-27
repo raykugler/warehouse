@@ -4,7 +4,9 @@ import './App.scss';
 import Lanes from './components/Lanes';
 import StageModal from './components/StageModal';
 import {routeStager, changeRoutes, routeInput} from './components/data';
+import {beltMaker} from './components/functions';
 // import {createLane} from './components/data'
+var wide = window.matchMedia("(min-width: 1020px)")
 class Main extends Component {
 
     constructor() {
@@ -18,6 +20,10 @@ class Main extends Component {
         
         };
     }
+      
+      
+
+
     routeInput=()=>{
         let newRoute = document.getElementById("changeRouteButton").value; 
         console.log(`new: ${newRoute}`)
@@ -42,9 +48,7 @@ class Main extends Component {
         this.setState({modalIsOpen: false});
       }
      
-componentDidMount=()=>{
-    // this.createLaneTwo('laneTwoHolder')
-}
+
 
 render(){
     return(
