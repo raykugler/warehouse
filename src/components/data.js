@@ -1,7 +1,8 @@
 export function createRoute(location, dsp, routeNumber){
     console.log('create route');
 }
-let staging_area_data = [
+export const map_data = [[50,48,46,42,38,34,30,26,22,18,14,10,6,2,200,230,250],[51,49,45,41,37,33,29,25,21,17,13,9,5,1,100,130,150]];
+export const staging_area_data = [
     {location: 50,
         routes:[
         {
@@ -306,6 +307,8 @@ let staging_area_data = [
 let openRouteData = [
     {route: 'CV42'}
 ]
+
+
 export function openStagingArea(e){
     for(let i = 0; i < 52; i++){
         if(staging_area_data[i].location === e){
@@ -319,57 +322,34 @@ export function openStagingArea(e){
         }
     }
 }    
-// let stagingArea = function(location, routeNumberOne, routeNumberTwo, routeNumberThree, routeNumberFour, routeNumberFive, dspOne, dspTwo, dspThree, dspFour, dspFive) {
-//         stagingArea.location = location,
-//             stagingArea.routes = {
-//                 dspOne: dspOne,
-//                 routeNumberOne: routeNumberOne,
-//                 dspTwo: dspTwo,
-//                 routeNumberTwo: routeNumberTwo,
-//                 dspThree: dspThree,
-//                 routeNumberThree: routeNumberThree,
-//                 dspFour: dspFour,
-//                 routeNumberFour: routeNumberFour,
-//                 dspFive: dspFive,
-//                 routeNumberFive: routeNumberFive,
-//             };
-//     }
-
-//  let x = new stagingArea(50, 'CT40','DLFR','CV9','DDDR','CX33','JUTR','CT65','BLST','CV2', 'POLE');
-
-//     console.log(x);
     
- function changeRoutes(){
-    // console.log(e);
-    // console.log(e.routes[p].routeNumber);
-    // e.routes[p].routeNumber = 5555;
-    let selectedRoute = document.getElementById('changeRouteInput')
-    selectedRoute.classList.remove('routeChangeInputhide');
-    selectedRoute.classList.add('routeChangeInput');
-
-}
+//  function changeRoutes(){
+//     let selectedRoute = document.getElementById('changeRouteInput')
+//     selectedRoute.classList.remove('routeChangeInputhide');
+//     selectedRoute.classList.add('routeChangeInput');
+// }
 
 
 
-export function routeStager(e){
-    let modal = document.getElementById('plannedRoutes');
-    for (let i = 0; i < staging_area_data.length; i++){
-        if(e === staging_area_data[i].location){
-            for(let p = 0; p < staging_area_data[i].routes.length;p++){
+// export function routeStager(e){
+//     let modal = document.getElementById('plannedRoutes');
+//     for (let i = 0; i < staging_area_data.length; i++){
+//         if(e === staging_area_data[i].location){
+//             for(let p = 0; p < staging_area_data[i].routes.length;p++){
                 
-                let route = staging_area_data[i].routes[p].routeNumber;
-                let dsp = staging_area_data[i].routes[p].DSP;
-                if(route !== null){
-                console.log(`route: ${route} DSP: ${dsp}`);
-                let routeButton = document.createElement('BUTTON');
-                let routeNumber = document.createTextNode(`${dsp} ${route}`);
-                routeButton.appendChild(routeNumber);
-                routeButton.classList.add('routeButton')
-                routeButton.addEventListener('click', e => changeRoutes(staging_area_data[i],p));
-                modal.appendChild(routeButton);
-            }}
-            console.log(staging_area_data[i].routes)
-        }
-    }
-    console.log(`working with ${e}`);
-}
+//                 let route = staging_area_data[i].routes[p].routeNumber;
+//                 let dsp = staging_area_data[i].routes[p].DSP;
+//                 if(route !== null){
+//                 console.log(`route: ${route} DSP: ${dsp}`);
+//                 let routeButton = document.createElement('BUTTON');
+//                 let routeNumber = document.createTextNode(`${dsp} ${route}`);
+//                 routeButton.appendChild(routeNumber);
+//                 routeButton.classList.add('routeButton')
+//                 routeButton.addEventListener('click', e => changeRoutes(staging_area_data[i],p));
+//                 modal.appendChild(routeButton);
+//             }}
+//             console.log(staging_area_data[i].routes)
+//         }
+//     }
+//     console.log(`working with ${e}`);
+// }

@@ -3,8 +3,8 @@ import Belt from './components/Belt'
 import './App.scss';
 import Lanes from './components/Lanes';
 import StageModal from './components/StageModal';
-import {routeStager, changeRoutes, routeInput} from './components/data';
-import {beltMaker} from './components/functions';
+import {routeInput} from './components/data';
+import {routeStager, beltMaker, changeRoutes} from './components/functions';
 // import {createLane} from './components/data'
 var wide = window.matchMedia("(min-width: 1020px)")
 class Main extends Component {
@@ -12,13 +12,13 @@ class Main extends Component {
     constructor() {
         super();
      
-        this.state = {
-          modalIsOpen: false,
-          stagingLocation: 0,
-        plannedRoutes:
-            ['CV50','CX42','CX22']
+        // this.state = {
+        //   modalIsOpen: false,
+        //   stagingLocation: 0,
+        // plannedRoutes:
+        //     ['CV50','CX42','CX22']
         
-        };
+        // };
     }
       
       
@@ -28,15 +28,15 @@ class Main extends Component {
         let newRoute = document.getElementById("changeRouteButton").value; 
         console.log(`new: ${newRoute}`)
     }
-    openModal=(e)=> {
-        this.setState({modalIsOpen: true});
-        this.setState({stagingLocation: e});
-        console.log(this.state.plannedRoutes.three)
+    // openModal=(e)=> {
+    //     this.setState({modalIsOpen: true});
+    //     this.setState({stagingLocation: e});
+    //     console.log(this.state.plannedRoutes.three)
   
-       console.log(`Staging Area ${e} is open`);
-       routeStager(e);
+    //    console.log(`Staging Area ${e} is open`);
+    //    routeStager(e);
         
-    }
+    // }
     
     afterOpenModal() {
         // references are now sync'd and can be accessed.
@@ -56,13 +56,13 @@ render(){
         
 
             <Lanes           
-            createLane = {this.createLane}
-            modalIsOpen={this.state.modalIsOpen}
-            closeModal = {this.closeModal} 
-            afterOpenModal={this.afterOpenModal}
-            stagingLocation = {this.state.stagingLocation}
-            openModal = {this.openModal}
-routeInput={this.routeInput}
+//             createLane = {this.createLane}
+//             modalIsOpen={this.state.modalIsOpen}
+//             closeModal = {this.closeModal} 
+//             afterOpenModal={this.afterOpenModal}
+//             stagingLocation = {this.state.stagingLocation}
+//             openModal = {this.openModal}
+// routeInput={this.routeInput}
             />
             
         </main>
