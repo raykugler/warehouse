@@ -1,82 +1,79 @@
 import React, { Component } from 'react';
-import {mapMaker, routeStager} from './functions';
+// import {mapMaker, routeStager, openModal} from './functions';
+import {changeRoutes, fillLanes} from './functions';
 import {map_data, createLane, openStagingArea} from './data';
 import StageModal from './StageModal';
 import Belt from './Belt';
+import {staging_area_data} from './data';
 
 class Lanes extends Component {
    
 
-    // openModal=(e)=> {
-    //     this.setState({modalIsOpen: true});
-    //     this.setState({stagingLocation: e});
-    //     console.log(this.state.plannedRoutes.three)
-  
-    //    console.log(`Staging Area ${e} is open`);
-    //    routeStager(e);
-        
-    // }    
-
-
-    createLanes = (e,f)=>{
-
-        // for ( let i = 2; i < 52; i+=4){
-        //     let number = i;
-        //     let laneTwo = document.getElementById(e)
-        
-        //     let stagingArea = document.createElement('section');
-        //     stagingArea.classList.add('stagingArea');
-            
-        //     let stageNumber= document.createElement('button');
-        //     stageNumber.classList.add('stagingNumber');
-            
-        //     let digit = document.createTextNode(number);
-        //     stageNumber.addEventListener('click', e => this.props.openModal(number));
-        
-        //     let plannedRoutes = document.createElement('div');
-        //     plannedRoutes.classList.add('plannedRoutes');
-             
-        //     let movedRoutes = document.createElement('div');
-        //     movedRoutes.classList.add('movedRoutes');
-        
-        //     stageNumber.appendChild(digit);
-        //     stagingArea.appendChild(stageNumber);
-        //     stagingArea.appendChild(movedRoutes);
-        //     stagingArea.appendChild(plannedRoutes);
-        //     laneTwo.appendChild(stagingArea);
-        // }
-        // for ( let i = 1; i < 52; i+=4){
-        //     let number = i;
-        //     let laneTwo = document.getElementById(f)
-        
-        //     let stagingArea = document.createElement('section');
-        //     stagingArea.classList.add('stagingArea');
-            
-        //     let stageNumber= document.createElement('button');
-        //     stageNumber.classList.add('laneOneStagingNumber');
-            
-        //     let digit = document.createTextNode(number);
-        //     stageNumber.addEventListener('click', e => this.props.openModal(number));
-        
-        //     let plannedRoutes = document.createElement('div');
-        //     plannedRoutes.classList.add('laneOnePlannedRoutes');
-             
-        //     let movedRoutes = document.createElement('div');
-        //     movedRoutes.classList.add('laneOneMovedRoutes');
-        
-        //     stageNumber.appendChild(digit);
-        //     stagingArea.appendChild(stageNumber);
-        //     stagingArea.appendChild(movedRoutes);
-        //     stagingArea.appendChild(plannedRoutes);
-        //     laneTwo.appendChild(stagingArea);
-        // }
+    routeStager=(e)=>{
+        let modal = document.getElementById('plannedRoutes');
+        for (let i = 0; i < staging_area_data.length; i++){
+            if(e === staging_area_data[i].location){
+                for(let p = 0; p < staging_area_data[i].routes.length;p++){
+                    
+                    let route = staging_area_data[i].routes[p].routeNumber;
+                    let dsp = staging_area_data[i].routes[p].DSP;
+                    if(route !== null){
+                    console.log(`route: ${route} DSP: ${dsp}`);
+                    let routeButton = document.createElement('BUTTON');
+                    let routeNumber = document.createTextNode(`${dsp} ${route}`);
+                    routeButton.appendChild(routeNumber);
+                    routeButton.classList.add('routeButton')
+                    routeButton.addEventListener('click', e => changeRoutes(staging_area_data[i],p));
+                    modal.appendChild(routeButton);
+                }}
+                console.log(staging_area_data[i].routes)
+            }
         }
-fillLanes=()=>{
+        console.log(`working with ${e}`);
+    }
 
-}
+
+ mapMaker=(map_data)=>{
+
+        for ( let i = 0; i < map_data.length; i++){
+            let currentLane = map_data[i];
+            for(let j = 0; j < currentLane.length; j++){
+                let currentArea = currentLane[j];
+                let stagingArea = document.createElement('section');
+                    stagingArea.classList.add('stagingArea'); 
+    
+                let stageNumber= document.createElement('button');
+                    stageNumber.classList.add('stagingNumber');    
+                    stageNumber.setAttribute('id' ,currentArea);
+            
+                let digit = document.createTextNode(currentArea);
+                    stageNumber.addEventListener('click', e => this.props.openModal(currentArea));
+    
+                let plannedRoutes = document.createElement('div');
+                    plannedRoutes.classList.add('plannedRoutes');
+    
+                let movedRoutes = document.createElement('div');
+                    movedRoutes.classList.add('movedRoutes');
+                    
+                    stageNumber.appendChild(digit);
+                    stagingArea.appendChild(stageNumber);
+                    stagingArea.appendChild(movedRoutes);
+                    stagingArea.appendChild(plannedRoutes);
+                         
+                    if(i === 0){
+                        let lane = document.getElementById('laneTwoHolder');
+                        lane.appendChild(stagingArea);
+                    }
+                    else{
+                        let lane = document.getElementById('laneOneHolder');
+                        lane.appendChild(stagingArea);
+                    }
+                }}
+           fillLanes();
+            }
+
     componentDidMount=()=>{
-        this.createLanes('laneTwoHolder','laneOneHolder');
-        mapMaker(map_data);
+       this.mapMaker(map_data);
 
     }
 render(){
@@ -89,13 +86,13 @@ render(){
 
         <section className='laneOneMain' id='laneOneHolder'></section>
         <StageModal
-        //   modalIsOpen={this.props.modalIsOpen}
-        //   closeModal = {this.props.closeModal} 
-        //   afterOpenModal={this.props.afterOpenModal}
-        //   stagingLocation = {this.props.stagingLocation}
-        //   openModal = {this.props.openModal}
-        //   changeRoutes={this.props.changeRoutes}
-        //   routeInput={this.props.routeInput}
+          modalIsOpen={this.props.modalIsOpen}
+          closeModal = {this.props.closeModal} 
+          afterOpenModal={this.props.afterOpenModal}
+          stagingLocation = {this.props.stagingLocation}
+          openModal = {this.props.openModal}
+          changeRoutes={this.props.changeRoutes}
+          routeInput={this.props.routeInput}
           />
         </section>
     );
