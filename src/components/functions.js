@@ -14,21 +14,23 @@ export function beltMaker(wide){
       console.log('hfhfh');
 }
 
-export function fillLanes(){
-    let laneTwoCheck = document.getElementById('laneTwoHolder').childElementCount;
-for(let i = 0; i < staging_area_data.length; i++){
-    for(let j = 0; j< laneTwoCheck; j++){
-        if(j===i){
-            let thisLocation = document.getElementById(i);
-            for(let h = 0; h < staging_area_data[i].routes.length; h++)
-{
-    console.log(staging_area_data[i].routes[h].routeNumber);
-}            
-    }}
-}
-    console.log(staging_area_data);
+// export function fillLanes(){
+//     let laneTwoCheck = document.getElementById('laneTwoHolder').childElementCount;
+//     console.log(`lane two check: ${laneTwoCheck}`)
+// for(let i = 0; i < staging_area_data.length; i++){
+//     for(let j = 0; j< laneTwoCheck; j++){
+//         if(j===i){
+//             for(let h = 0; h < staging_area_data[i].routes.length; h++)
+// {
+//     let thisLocation = document.getElementById('staging_area_' + j);
+//     let routeTest = staging_area_data[i].routes[h].routeNumber;
+//     let numberTest = document.createTextNode(routeTest);
+//     thisLocation.appendChild(numberTest);
+// }            
+//     }}
+// }
 
-}
+// }
 
 export function changeRoutes(){
     let selectedRoute = document.getElementById('changeRouteInput')

@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
-import Belt from './components/Belt'
 import './App.scss';
 import Lanes from './components/Lanes';
-import StageModal from './components/StageModal';
-import {routeInput} from './components/data';
-import {routeStager, beltMaker, changeRoutes} from './components/functions';
-import {staging_area_data} from './components/data';
 // import {createLane} from './components/data'
 var wide = window.matchMedia("(min-width: 1020px)")
 class Main extends Component {

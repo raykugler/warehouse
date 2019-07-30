@@ -20,10 +20,12 @@
         flex-direction: row;
     }
     .stagingArea{
-        height: 270px;
+        height: 302px;
         width: 70px;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: .3fr 1fr 1fr;
+        border: none;
+        border-right: 1px solid #304269;
     }
     .laneOneStageNumber{
         grid-column: 1/-1;
@@ -39,8 +41,8 @@
         grid-row: 1/2;
     }
     .plannedRoutes{
-        grid-column: 1/2;
-        grid-row: 2/-1
+        grid-column: 1/-1;
+        grid-row: 2/-1;
     }
     .movedRoutes{
         grid-column: 2/3;
@@ -52,7 +54,7 @@
     }
     .beltsegment{
         width: 5px;
-        height: 60px;
+        height: 20px;
     }
     .beltrod{
         width: 10px;
@@ -63,5 +65,13 @@
         flex-direction: row;
         grid-column: 1/-1;
         grid-row: 3/4;
+    }
+    .routeButton {
+        width: 40px;
+        height: 40px;
+        color: white;
+        font-size: 9px;
+        font-weight: normal;
+        margin: 1px;
     }
   }

@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 
 const customStyles = {
@@ -17,11 +16,7 @@ const customStyles = {
 Modal.setAppElement(document.getElementById('root'))
 
 class StageModal extends React.Component {
-  constructor(props) {
-    super(props);
-    
-
-  };
+  
   
 
 

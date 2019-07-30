@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 // import {mapMaker, routeStager, openModal} from './functions';
 import {changeRoutes, fillLanes} from './functions';
-import {map_data, createLane, openStagingArea} from './data';
+import {map_data} from './data';
 import StageModal from './StageModal';
 import Belt from './Belt';
 import {staging_area_data} from './data';
@@ -44,20 +44,18 @@ class Lanes extends Component {
     
                 let stageNumber= document.createElement('button');
                     stageNumber.classList.add('stagingNumber');    
-                    stageNumber.setAttribute('id' ,currentArea);
+                   
             
                 let digit = document.createTextNode(currentArea);
                     stageNumber.addEventListener('click', e => this.props.openModal(currentArea));
     
                 let plannedRoutes = document.createElement('div');
                     plannedRoutes.classList.add('plannedRoutes');
-    
-                let movedRoutes = document.createElement('div');
-                    movedRoutes.classList.add('movedRoutes');
+                    plannedRoutes.setAttribute('id' ,'staging_area_' + currentArea);
                     
                     stageNumber.appendChild(digit);
                     stagingArea.appendChild(stageNumber);
-                    stagingArea.appendChild(movedRoutes);
+
                     stagingArea.appendChild(plannedRoutes);
                          
                     if(i === 0){
@@ -69,11 +67,41 @@ class Lanes extends Component {
                         lane.appendChild(stagingArea);
                     }
                 }}
-           fillLanes();
+                this.fillLanes()
+            }
+
+fillLanes=()=>{
+    let laneTwoCheck = document.getElementById('laneTwoHolder').childElementCount;
+    
+        for(let i = 0; i < staging_area_data.length; i++){
+                for(let j = 0; j< laneTwoCheck; j++){
+                    if(j===i){
+                        for(let h = 0; h < staging_area_data[i].routes.length; h++)
+            {
+
+                let thisLocation = document.getElementById('staging_area_' + staging_area_data[i].location);
+                let route = staging_area_data[i].routes[h].routeNumber;
+                let dsp = staging_area_data[i].routes[h].DSP;
+                    if(route !== null){
+                        let routeButton = document.createElement('BUTTON');
+                        let routeNumber = document.createTextNode(`${dsp} ${route}`);
+                            routeButton.appendChild(routeNumber);
+                            routeButton.classList.add('routeButton');
+                            routeButton.addEventListener('click', e => changeRoutes(staging_area_data[i]));
+                            thisLocation.appendChild(routeButton);
+                    }
+                             
+                    else{
+
+            }            }
+                }}
+            }
+            
             }
 
     componentDidMount=()=>{
        this.mapMaker(map_data);
+    
 
     }
 render(){
