@@ -1,0 +1,42 @@
+{
+  "name": "DSE backend app",
+  "db": "mongodb://127.0.0.1:27017/dse",
+  "port": 5000,
+  "static": "public",
+  "bcrypt": {
+    "hashRounds": 10
+  },
+  "users": {
+    "returns": ["_id", "firstName", "lastName", "email", "phone", "su"],
+    "tableName": "User",
+    "firstName": {
+      "min": 2,
+      "max": 50
+    },
+    "lastName": {
+      "min": 2,
+      "max": 50
+    },
+    "email": {
+      "min": 6,
+      "max": 256
+    },
+    "phone": {
+      "min": 6,
+      "max": 20
+    },
+    "password": {
+      "min": 10,
+      "max": 30,
+      "lowerCase": 1,
+      "upperCase": 1,
+      "numeric": 1,
+      "symbol": 1,
+      "requirementCount": 2
+    },
+    "hash": {
+      "min": 10,
+      "max": 1024
+    }
+  }
+}

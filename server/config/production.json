@@ -1,0 +1,7 @@
+{
+  "name": "DSE - Backend app: production",
+  "mail": {
+    "host": "prod-mail-server"
+  },
+  "jwtPrivateKey": ""
+}
