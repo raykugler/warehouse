@@ -1,22 +1,31 @@
 import React, {Component} from 'react';
-import './App.scss';
-import Lanes from './components/Lanes';
+import {connect} from 'react-redux';
+import {getRoutes} from '../actions';
+import '../App.scss';
+import Lanes from './Lanes';
+// import {wide} from './functions'; // your old wide variable
 // import {createLane} from './components/data'
-var wide = window.matchMedia("(min-width: 1020px)")
 
-class Main extends Component {
 
-  constructor() {
-    super();
+export class Main extends Component {
+
+  constructor(props) {
+    super(props);
 
     this.state = {
       modalIsOpen: false,
       stagingLocation: 0,
       plannedRoutes:
         ['CV50', 'CX42', 'CX22']
-
     };
   }
+
+
+  componentDidMount() {
+    // Request routes
+    this.props.onGetRoutes(this.props.url);
+  }
+
 
   routeInput = () => {
     let newRoute = document.getElementById("changeRouteButton").value;
@@ -45,6 +54,10 @@ class Main extends Component {
   };
 
   render() {
+
+    // example routes
+    console.log(this.props.routes);
+
     return (
       <main className='index'>
         <Lanes ref='lane'
@@ -62,4 +75,19 @@ class Main extends Component {
   }
 }
 
-export default Main;
+function mapStateToProps(state) {
+  return {
+    routes: state.routes,
+    url: state.config.urls.routes
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    onGetRoutes: url => dispatch(getRoutes(url))
+  }
+}
+
+export default connect(
+  mapStateToProps, mapDispatchToProps
+)(Main);
