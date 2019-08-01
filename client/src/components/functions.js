@@ -14,6 +14,8 @@ export function beltMaker(wide){
       console.log('hfhfh');
 }
 
+export var wide = () => window.matchMedia("(min-width: 1020px)");
+
 // export function fillLanes(){
 //     let laneTwoCheck = document.getElementById('laneTwoHolder').childElementCount;
 //     console.log(`lane two check: ${laneTwoCheck}`)
