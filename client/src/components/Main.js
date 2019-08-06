@@ -56,7 +56,8 @@ export class Main extends Component {
   render() {
 
     // example routes
-    console.log(this.props.routes);
+
+    
 
     return (
       <main className='index'>
@@ -91,3 +92,55 @@ function mapDispatchToProps(dispatch) {
 export default connect(
   mapStateToProps, mapDispatchToProps
 )(Main);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//changeStopped is just a stand-in value right now. 
+//I'm not worried about the proper way of changind a boolean right now
+
+const setRed=(changeStopped)=> dispatch => dispatch ({
+  
+    type: "CHANGE",
+    payload: changeStopped, 
+    
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

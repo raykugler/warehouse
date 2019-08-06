@@ -9,7 +9,6 @@ export class Header extends Component {
   render() {
     return (
       <header>
-        <h1>Warehouse</h1>
       </header>
     );
   }

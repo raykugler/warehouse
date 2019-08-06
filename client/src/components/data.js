@@ -304,9 +304,16 @@ export const staging_area_data = [
      ]
         },    
     ]
-let openRouteData = [
+
+
+
+    let openRouteData = [
     {route: 'CV42'}
 ]
+
+
+
+
 
 
 export function openStagingArea(e){
@@ -323,6 +330,155 @@ export function openStagingArea(e){
     }
 }    
     
+
+
+
+export const routes = [
+    {
+         route_code: 'CV56',
+         dsp: 'DLFR',
+         location: 50,
+         
+     },
+     {
+        route_code: 'CV52',
+        dsp: 'DLFR',
+        location: 46,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DLFR',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DLFR',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DLFR',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DLFR',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DLFR',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DLFR',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DLFR',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DLFR',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DLFR',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DDDL',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DDDL',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DDDL',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DDDL',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DDDL',
+        location: 50,
+        
+    }, 
+    {
+        route_code: 'CV56',
+        dsp: 'DDDL',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DDDL',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DDDL',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DDDL',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'DDDL',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'JUTR',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'JUTR',
+        location: 50,
+        
+    },
+    {
+        route_code: 'CV56',
+        dsp: 'JUTR',
+        location: 50,
+        
+    },
+];
 //  function changeRoutes(){
 //     let selectedRoute = document.getElementById('changeRouteInput')
 //     selectedRoute.classList.remove('routeChangeInputhide');
