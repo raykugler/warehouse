@@ -1,12 +1,32 @@
 const mongoose = require("mongoose");
 const {MongoMemoryServer} = require('mongodb-memory-server');
+const config = require('config');
 const {Routes} = require('./routes');
 
 
 describe('Routes', () => {
 
+  let locations;
+
   const mongod = new MongoMemoryServer();
-  const routes = [{loc: '51'}, {loc: '12'}];
+  const routes = [
+    {
+      stagingLocation: '',
+      routeCode: 'CT3',
+      dsp: 'POLE'
+    },
+    {
+      stagingLocation: '',
+      routeCode: 'CV7',
+      dsp: 'JUTR'
+    }
+  ];
+
+  const location = new mongoose.Schema({
+    stagingLocation: {type: String}
+  });
+
+  const Location = mongoose.model(String(config.get("locations.tableName")), location);
 
   beforeAll(async done => {
     const uri = await mongod.getConnectionString();
@@ -14,48 +34,77 @@ describe('Routes', () => {
       useNewUrlParser: true,
       useCreateIndex: true
     });
+    locations = await Location.insertMany([
+      {stagingLocation: '51'},
+      {stagingLocation: '12'}
+    ]);
+    for (let i = 0; i < locations.length; i++) {
+      routes[i].stagingLocation = locations[i]._id;
+    }
+
     done();
   });
 
   afterAll(async () => {
+    Location.delete({}).then(() => {
+    });
     await mongoose.disconnect();
     return await mongod.stop();
   });
 
   it('should create and return routes array', function () {
 
-    return Routes.create({routes})
+    return Routes.create(routes)
       .then(res => {
-        return expect(res.toJSON())
-          .toHaveProperty('routes', routes);
+        expect(res.length).toBe(routes.length);
+        expect(res[0]).toHaveProperty('status');
+        expect(res[0]).toHaveProperty('counter');
+        expect(res[0]).toHaveProperty('stagingLocation');
+        expect(res[0]).toHaveProperty('routeCode');
+        expect(res[0]).toHaveProperty('dsp');
+        expect(res[0]).toHaveProperty('date');
       });
   });
 
   it('should return routes array', async () => {
-    const result = (await Routes.getCurrent()).toJSON();
-    return expect(result)
-      .toHaveProperty('routes', routes);
+    const res = await Routes.getCurrent();
+    expect(res.length).toBe(routes.length);
+    expect(res[0]).toHaveProperty('status');
+    expect(res[0]).toHaveProperty('counter');
+    expect(res[0]).toHaveProperty('stagingLocation');
+    expect(res[0]).toHaveProperty('routeCode');
+    expect(res[0]).toHaveProperty('dsp');
+    return expect(res[0]).toHaveProperty('date');
   });
 
-  it('should update routes', async () => {
-    const updatedRoutes = [...routes];
-    updatedRoutes[0].loc = '8';
-    const result = await Routes.update({routes: updatedRoutes});
-    return expect(result.toJSON())
-      .toHaveProperty('routes', updatedRoutes);
+  it('should update route', async () => {
+    const item = (await Routes.findOne({stagingLocation: locations[0]._id})).toJSON();
+    const newRoute = {...item};
+    newRoute.status = 'finished';
+    newRoute.counter = 2;
+    newRoute.stagingLocation = locations[1]._id;
+    newRoute.routeCode = 'test code';
+    newRoute.dsp = 'test';
+
+    const updatedRoute = (await Routes.update(newRoute)).toJSON();
+
+    expect(updatedRoute).toHaveProperty('status', newRoute.status);
+    expect(updatedRoute).toHaveProperty('counter', newRoute.counter);
+    expect(updatedRoute).toHaveProperty('stagingLocation', newRoute.stagingLocation);
+    return expect(updatedRoute).toHaveProperty('dsp', newRoute.dsp);
   });
 
   it('should delete routes', async () => {
 
     // Make sure that routes exist
-    expect(await Routes.getCurrent() === null)
-      .toBe(false);
+    expect((await Routes.find()).length)
+      .toBe(routes.length);
 
     // Remove routes
-    await Routes.deleteCurrent();
+    await Routes.deleteAll();
 
     // Make sure that routes removed
-    return expect(await Routes.getCurrent() === null)
-      .toBe(true);
+    return expect((await Routes.find()).length)
+      .toBe(0);
   });
 });
