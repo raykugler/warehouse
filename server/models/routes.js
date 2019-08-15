@@ -11,7 +11,7 @@ const routes = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: 'Not started'
+    default: 'Not Verified'
   },
   counter: {
     type: Number,
