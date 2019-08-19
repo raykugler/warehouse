@@ -39,7 +39,7 @@ lane.statics.getById = function(_id) {
    * Get map by id
    * @return Object:
    */
-  return this.findById(_id).select("-__v");
+  return this.findOne({_id});
 };
 
 lane.statics.update = async function(obj) {
@@ -61,10 +61,7 @@ lane.statics.delById = async function(_id) {
   /**
    * Remove lane by id
    */
-  const item = await this.findById(_id);
-  if (!item) return null;
-
-  return item.remove();
+  return this.deleteOne({_id});
 };
 
 exports.Lane = mongoose.model(String(config.get("lanes.tableName")), lane);
