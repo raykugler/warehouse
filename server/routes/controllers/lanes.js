@@ -1,4 +1,5 @@
 const {Lane} = require('../../models/lanes');
+const {Location} = require('../../models/locations');
 const config = require('config');
 
 
@@ -7,6 +8,7 @@ module.exports = {
     /**
      * Returns list of lines
      */
+    await Location.getAllLocations();
     return res.send(await Lane.getAllLanes())
   },
   getById: async (req, res) => {
@@ -24,14 +26,21 @@ module.exports = {
     return res.send(lane);
   },
 
-  post: async (req, res) => res.send(await Lane.create(req.body)),
+  post: async (req, res) => {
+    const _lane = await Lane.getByName(req.body.name);
+    if (_lane) return res.send(_lane);
+    return res.send(await Lane.create(req.body))
+  },
 
   put: async (req, res) => {
-    if (!req.body._id) req.body._id = req.params.id;
 
-    if (req.body._id !== req.params.id) return res.status(400).send({
-      error: config.get('errors.lanes.errc2')
-    });
+    const _lane = await Lane.getByName(req.body.name);
+    const old_lane = await Lane.getById(req.body._id);
+
+    if (_lane && _lane.name !== old_lane.name)
+      return res.status(400).send({
+        error: config.get('errors.lanes.errc3')
+      });
 
     const lane = await Lane.update(req.body);
 

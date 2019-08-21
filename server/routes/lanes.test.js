@@ -4,6 +4,7 @@ const {MongoMemoryServer} = require('mongodb-memory-server');
 const mongoose = require('mongoose');
 const config = require('config');
 const {Lane} = require('../models/lanes');
+const {Location} = require('../models/locations');
 const lanes = require('./lanes');
 
 
@@ -20,10 +21,6 @@ describe('Lanes router', () => {
       useCreateIndex: true
     });
 
-    const location = new mongoose.Schema({
-      stagingLocation: {type: String},
-    });
-    const Location = mongoose.model(String(config.get("locations.tableName")), location);
     locations = await Location.insertMany([
       {stagingLocation: "21"},
       {stagingLocation: "10"},
@@ -127,25 +124,52 @@ describe('Lanes router', () => {
     let lane, response;
     const query = () => req.post('/').send(lane);
 
-    beforeAll(async () => {
-      lane = {name: 'Lane name'};
-      response = (await query()).body;
+    describe('if lane name is not available', () => {
+
+      beforeAll(async () => {
+        lane = {name: 'Lane name'};
+        await Lane(lane).save();
+        response = (await query()).body;
+      });
+
+      afterAll(async () => {
+        await Lane.findOneAndDelete({_id: response._id});
+      });
+
+      it('should contains name', function () {
+        expect(response).toHaveProperty('name', lane.name);
+      });
+
+      it('should contains locations', function () {
+        expect(response).toHaveProperty('locations', []);
+      });
+
+      it('should contains id', function () {
+        expect(response).toHaveProperty('_id');
+      });
     });
 
-    afterAll(async () => {
-      await Lane.findOneAndDelete({_id: response._id});
-    });
+    describe('if lane name is available', () => {
+      beforeAll(async () => {
+        lane = {name: 'Lane name'};
+        response = (await query()).body;
+      });
 
-    it('should contains name', function () {
-      expect(response).toHaveProperty('name', lane.name);
-    });
+      afterAll(async () => {
+        await Lane.findOneAndDelete({_id: response._id});
+      });
 
-    it('should contains locations', function () {
-      expect(response).toHaveProperty('locations', []);
-    });
+      it('should contains name', function () {
+        expect(response).toHaveProperty('name', lane.name);
+      });
 
-    it('should contains id', function () {
-      expect(response).toHaveProperty('_id');
+      it('should contains locations', function () {
+        expect(response).toHaveProperty('locations', []);
+      });
+
+      it('should contains id', function () {
+        expect(response).toHaveProperty('_id');
+      });
     });
   });
 
@@ -182,55 +206,30 @@ describe('Lanes router', () => {
       });
     });
 
-    describe('if request body does not have an id', () => {
-      let data;
+    describe('if user try to create a lane with taken name', () => {
+
       beforeAll(async () => {
-        lane = await Lane({name: 'Test name'}).save();
+        await Lane({name: 'existing name'}).save();
+        lane = await Lane({name: 'Test lane name'}).save();
+        lane.name = 'existing name';
         url = `/${lane._id}`;
-        data = {...lane.toJSON()};
-        delete data._id;
-        delete data.__v;
 
-        response = (await req.put(url).send(data)).body;
+        response = await query();
       });
 
-
-      afterAll(async () => {
-        await lane.delete();
+      afterAll(() => {
         lane = null;
         response = null;
         url = null;
       });
 
-      it('should add id', function () {
-        expect(response).toHaveProperty('_id', String(lane._id));
+      it('should return status code 400', function () {
+        expect(response.status).toBe(400);
       });
-
-      it('should has a name', function () {
-        expect(response).toHaveProperty('name', lane.name);
-      });
-    });
-
-    describe('if IDs does not match', () => {
-
-      beforeAll(async () => {
-        lane = await Lane({name: 'Test name'}).save();
-        url = `/${mongoose.Types.ObjectId()}`;
-
-        response = (await query()).body;
-      });
-
-      afterAll(async () => {
-        await lane.delete();
-        lane = null;
-        response = null;
-        url = null;
-      });
-
 
       it('should return an error', function () {
-        expect(response).toHaveProperty('error',
-          config.get('errors.lanes.errc2'))
+        expect(response.body).toHaveProperty('error',
+          config.get('errors.lanes.errc3'));
       });
     });
 
