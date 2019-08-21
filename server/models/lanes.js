@@ -36,10 +36,19 @@ lane.statics.getAllLanes = function() {
 
 lane.statics.getById = function(_id) {
   /**
-   * Get map by id
+   * Get lane by id
    * @return Object:
    */
-  return this.findOne({_id});
+  return this.findOne({_id})
+    .populate('locations', '-__v')
+    .select("-__v");
+};
+
+lane.statics.getByName = function(name) {
+  /**
+   * Get lane by name
+   */
+  return  this.findOne({name});
 };
 
 lane.statics.update = async function(obj) {
@@ -48,7 +57,7 @@ lane.statics.update = async function(obj) {
    * @return Promise:
    */
 
-  const _lane = await this.findById(obj._id);
+  const _lane = await this.findById(obj._id).select("-__v");
   if (!_lane) return null;
 
   _lane.name = obj.name;
