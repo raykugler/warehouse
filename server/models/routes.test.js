@@ -6,7 +6,7 @@ const {Routes} = require('./routes');
 
 describe('Routes', () => {
 
-  let locations;
+  let locations, route;
 
   const mongod = new MongoMemoryServer();
   const routes = [
@@ -46,8 +46,7 @@ describe('Routes', () => {
   });
 
   afterAll(async () => {
-    Location.delete({}).then(() => {
-    });
+    await Location.deleteMany({});
     await mongoose.disconnect();
     return await mongod.stop();
   });
@@ -74,7 +73,22 @@ describe('Routes', () => {
     expect(res[0]).toHaveProperty('stagingLocation');
     expect(res[0]).toHaveProperty('routeCode');
     expect(res[0]).toHaveProperty('dsp');
+    route = res[0].toJSON();
     return expect(res[0]).toHaveProperty('date');
+  });
+
+  it('should return all routes', function () {
+    return Routes.getAll().then(res => {
+      console.log(res);
+      return expect(res.length).toBe(routes.length);
+    })
+  });
+
+  it('should return same route for empty object', function () {
+    return Routes.update({_id: route._id}).then(res => {
+      expect(String(res.stagingLocation))
+        .toBe(String(route.stagingLocation));
+    });
   });
 
   it('should update route', async () => {
