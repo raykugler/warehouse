@@ -4,6 +4,8 @@ const {MongoMemoryServer} = require('mongodb-memory-server');
 const mongoose = require('mongoose');
 const config = require('config');
 const {Map} = require('../models/maps');
+const {Lane} = require('../models/lanes');
+const {Location} = require('../models/locations');
 const maps = require('./maps');
 
 
@@ -73,18 +75,70 @@ describe('maps route', () => {
 
   describe('GET /current', () => {
 
-    let map, response;
-
     const query = () => req.get('/current');
 
-    describe('if exists default map', () => {
+    afterEach(async done => {
+      await Map.deleteMany({});
+      done();
+    });
+
+    describe('if there no default map', () => {
+
+      let map, response;
 
       beforeAll(async () => {
-        map = await Map({name: 'Current map', default: true}).save();
+        map = await Map({name: 'Current map', default: false}).save();
         response = (await query()).body;
       });
 
       afterAll(async () => {
+        await map.delete();
+        map = null;
+        response = null;
+      });
+
+      it('should ', function () {
+        expect(response).toHaveProperty('error',
+          config.get('errors.maps.errc1'));
+      });
+    });
+
+    describe('if exists default map', () => {
+
+      let map, response, laneA, laneB, locationsA, locationsB;
+
+      beforeAll(async () => {
+
+        locationsA = await Location.insertMany([
+          {stagingLocation: '1010'},
+          {stagingLocation: '1030'},
+        ]);
+        laneA = await Lane({
+          name: 'Test Lane A',
+          locations: locationsA.map(a => a._id)
+        }).save();
+
+        locationsB = await Location.insertMany([
+          {stagingLocation: '33333'}
+        ]);
+
+        laneB = await Lane({
+          name: 'Test Lane B',
+          locations: locationsB.map(b => b._id)
+        }).save();
+
+        const lanes = [laneA._id, laneB._id];
+
+
+        map = await Map({name: 'Test Default Map Object', default: true, lanes}).save();
+        response = (await query()).body;
+      });
+
+      afterAll(async () => {
+        await laneA.delete();
+        await laneB.delete();
+        await locationsA.delete();
+        await locationsB.delete();
         await map.delete();
         map = null;
         response = null;
@@ -101,24 +155,20 @@ describe('maps route', () => {
       it('should contains name', function () {
         expect(response).toHaveProperty('name', map.name)
       });
-    });
 
-    describe('if there no default map', () => {
-
-      beforeAll(async () => {
-        map = await Map({name: 'Current map', default: false}).save();
-        response = (await query()).body;
+      it('should contains lane A', function () {
+        const lanes = response.lanes.map(l => l._id);
+        expect(lanes).toContain(String(laneA._id));
       });
 
-      afterAll(async () => {
-        await map.delete();
-        map = null;
-        response = null;
+      it('should contains lane B', function () {
+        const lanes = response.lanes.map(l => l._id);
+        expect(lanes).toContain(String(laneB._id));
       });
 
-      it('should ', function () {
-        expect(response).toHaveProperty('error',
-          config.get('errors.maps.errc1'));
+      it('should contains an array of locations in laneA', function () {
+        const _laneA = response.lanes.filter(l => l._id === String(laneA._id))[0];
+        expect(_laneA.locations.length).toBe(locationsA.length);
       });
     });
   });
@@ -152,6 +202,12 @@ describe('maps route', () => {
     it('should contains lanes property', function () {
       expect(response).toHaveProperty('lanes', []);
     });
+
+    it('should return same map if map already exists', function () {
+      return query().then(res => {
+        return expect(res.body._id).toBe(response._id);
+      })
+    });
   });
 
   describe('PUT /:id', () => {
@@ -160,85 +216,89 @@ describe('maps route', () => {
 
     const query = () => req.put(url).send(map);
 
-    beforeAll(async () => {
-      map = await Map({name: 'New map'}).save();
-      map.default = true;
-      map.name = "updated name";
-      map.lanes.push(mongoose.Types.ObjectId());
-
-      url = `/${map._id}`;
-    });
-
-    afterAll(async () => {
-      await map.delete();
-    });
-
-    describe('if map have an id', () => {
-
-      beforeAll(async () => {
-        response = (await query()).body;
-      });
-
-      it('should contains new name', function () {
-        expect(response).toHaveProperty('name', map.name);
-      });
-
-      it('should contains default', function () {
-        expect(response).toHaveProperty('default', map.default);
-      });
-
-      it('should contains new line', function () {
-        expect(response.lanes.length).toBe(map.lanes.length);
-      });
-    });
-
-    describe('if map does not have an id', () => {
-      let body, resp;
-
-      beforeAll(async () => {
-        body = {...map.toJSON()};
-        delete body._id;
-        resp = (await req.put(url).send(body)).body;
-      });
-
-      it('should contains a new name', function () {
-        expect(resp).toHaveProperty('name', body.name);
-      });
-
-      it('should contains default', function () {
-        expect(resp).toHaveProperty('default', body.default);
-      });
-
-      it('should contains new line', function () {
-        expect(resp.lanes.length).toBe(body.lanes.length);
-      });
-    });
-
-    describe('if map id does not match with url id', () => {
-
-      beforeAll(async () => {
-        map._id = mongoose.Types.ObjectId();
-        response = (await query()).body;
-      });
-
-      it('should contains an error property', function () {
-        expect(response).toHaveProperty('error',
-          config.get('errors.maps.errc3'));
-      });
-    });
-
     describe('if map _id does not exist', () => {
 
       beforeAll(async () => {
+        map = {name: 'Some name'};
         const id = mongoose.Types.ObjectId();
         map._id = id;
         url = `/${id}`;
+
         response = (await query()).body;
+      });
+
+      afterAll(async () => {
+        await map.delete();
+        response = null;
+        url = null;
       });
 
       it('should return an error', function () {
         expect(response).toHaveProperty('error',
           config.get('errors.maps.errc2'));
+      });
+    });
+
+    describe('if map name is taken', () => {
+      let conflict_map, conflict_name;
+
+      beforeAll(async () => {
+        conflict_name = 'conflict name';
+        conflict_map = await Map({name: conflict_name}).save();
+
+        map = await Map({name: 'New map'}).save();
+        map.default = true;
+        map.name = "updated name";
+        map.lanes.push(mongoose.Types.ObjectId());
+        map.name = conflict_name;
+
+        url = `/${map._id}`;
+        response = await query();
+      });
+
+      afterAll( async () => {
+        await conflict_map.delete();
+        await map.delete();
+      });
+
+      it('should return status code 400', function () {
+        expect(response.status).toBe(400);
+      });
+
+      it('should contains an error', function () {
+        expect(response.body).toHaveProperty('error',
+          config.get('errors.maps.errc4'));
+      });
+    });
+
+    describe('if data is valid', () => {
+
+      beforeAll(async () => {
+        map = await Map({name: 'Map with valid name'}).save();
+        url = `/${map._id}`;
+
+        response = await query();
+      });
+
+      afterAll(async () => {
+        await map.delete();
+        url = null;
+      });
+
+      it('should return status code 200', function () {
+        expect(response.status).toBe(200);
+      });
+
+      it('should contains map id', function () {
+        expect(response.body).toHaveProperty('_id', String(map._id));
+      });
+
+      it('should contains map name', function () {
+        expect(response.body).toHaveProperty('name', map.name);
+      });
+
+      it('should contains map lanes', function () {
+        expect(response.body).toHaveProperty('lanes', []);
       });
     });
   });
