@@ -29,7 +29,7 @@ location.statics.getAllLocations = function() {
    * Return list of lanes
    * @return Promise:
    */
-  return this.find().populate('locations').select("-__v");
+  return this.find().select("-__v");
 };
 
 location.statics.getById = function(_id) {
@@ -40,13 +40,17 @@ location.statics.getById = function(_id) {
   return this.findById(_id).select("-__v");
 };
 
+location.statics.getByStagingLocation = function(stagingLocation) {
+  return this.findOne({stagingLocation});
+};
+
 location.statics.update = async function(obj) {
   /**
    * Update and return location
    * @return Promise:
    */
 
-  const _location = await this.findById(obj._id);
+  const _location = await this.findById(obj._id).select("-__v");
   if (!_location) return null;
 
   _location.stagingLocation = obj.stagingLocation;
@@ -59,10 +63,7 @@ location.statics.delById = async function(_id) {
   /**
    * Remove lane by id
    */
-  const item = await this.findById(_id);
-  if (!item) return null;
-
-  return item.remove();
+  return this.deleteOne({_id});
 };
 
 exports.Location = mongoose.model(String(config.get("locations.tableName")), location);
