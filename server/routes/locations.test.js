@@ -143,7 +143,7 @@ describe('Locations router', () => {
       expect(response.body).toHaveProperty('_id');
     });
 
-    it('should constains stagingLocation', function () {
+    it('should contains stagingLocation', function () {
       expect(response.body).toHaveProperty(
         'stagingLocation',
         data.stagingLocation);
@@ -151,6 +151,12 @@ describe('Locations router', () => {
 
     it('should contains routes', function () {
       expect(response.body).toHaveProperty('routes', [])
+    });
+
+    it('should return same location if it exists', () => {
+      return query().then(res => {
+        expect(res.body._id).toBe(response.body._id);
+      });
     });
   });
 
@@ -221,6 +227,40 @@ describe('Locations router', () => {
       it('should contains error message', function () {
         expect(response.body).toHaveProperty('error',
           config.get('errors.locations.errc1'));
+      });
+    });
+
+    describe('if user change the staging location to unavailable', () => {
+      let tempLocation, loc;
+
+      beforeAll(async () => {
+        tempLocation = await Location({stagingLocation: 'taken'}).save();
+        loc = await Location({stagingLocation: '24'}).save();
+        location = loc.toJSON();
+        location.stagingLocation = 'taken';
+
+        url = `/${location._id}`;
+        response = await req.put(url).send(location);
+
+
+      });
+
+      afterAll(async () => {
+        await loc.delete();
+        await tempLocation.delete();
+        await location.delete();
+        loc = null;
+        url = null;
+        response = null
+      });
+
+      it('should return status code 400', function () {
+        expect(response.status).toBe(400);
+      });
+
+      it('should contains an error', function () {
+        expect(response.body).toHaveProperty('error',
+          config.get('errors.locations.errc3'));
       });
     });
   });
