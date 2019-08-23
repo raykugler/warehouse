@@ -2,9 +2,18 @@ const mongoose = require("mongoose");
 const config = require('config');
 
 const routes = new mongoose.Schema({
-  date : { type : Date, default: Date.now },
-  routeCode: { type: String, required: true },
-  dsp: { type: String, required: true },
+  date: {
+    type: Date,
+    default: Date.now,
+    expires: config.get('routes.expires')
+  },
+  routeCode: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true
+  },
+  dsp: {type: String, required: true},
   stagingLocation: {
     type: mongoose.Schema.Types.ObjectId,
     ref: String(config.get("locations.tableName")),
@@ -19,26 +28,21 @@ const routes = new mongoose.Schema({
   }
 });
 
-routes.statics.create = function(_routes) {
+routes.statics.create = function (_route) {
   /**
    * Save routes
    *
    * @type {Model}
    * @return Promise:
    */
-  return this.insertMany(_routes);
+  return this(_route).save();
 };
 
-routes.statics.getCurrent = function() {
-  /**
-   * Return list of routes (current day)
-   * @return Promise:
-   */
-  const today = todayIs();
-  return this.find({date: {$gte: today}}).select("-__v");
+routes.statics.getAllRoutes = function () {
+  return this.find().populate('stagingLocation', '-__v -routes').select('-__v');
 };
 
-routes.statics.getAll = function() {
+routes.statics.getAll = function () {
   /**
    * Return list of all routes
    * @return Promise:
@@ -46,7 +50,15 @@ routes.statics.getAll = function() {
   return this.find().select("-__v");
 };
 
-routes.statics.update = async function(_route) {
+routes.statics.getById = function (_id) {
+  return this.findOne({_id}).populate('stagingLocation', '-__v -routes').select('-__v');
+};
+
+routes.statics.getByRouteCode = function (routeCode) {
+  return this.findOne({routeCode});
+};
+
+routes.statics.update = async function (_route) {
   /**
    * Update routes
    * @return Promise:
@@ -65,21 +77,12 @@ routes.statics.update = async function(_route) {
   return current.save();
 };
 
-routes.statics.deleteAll = function() {
+routes.statics.deleteAll = function () {
   /**
    * Remove routes
    */
   return this.deleteMany({});
 };
-
-function todayIs() {
-  /**
-   * Calculate current date
-   * @type {Date}
-   */
-  const date = new Date();
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-}
 
 
 exports.Routes = mongoose.model(String(config.get("routes.tableName")), routes);
