@@ -20,22 +20,26 @@ const map = new mongoose.Schema({
   }]
 });
 
-map.statics.create = function(map) {
+map.statics.create = function(_map) {
   /**
    * Create a new map
    *
    * @type {Model}
    * @return Promise:
    */
-  return this(map).save();
+  return this(_map).save();
 };
 
-map.statics.getByAll = function() {
+map.statics.getCurrent = function() {
+  return this.findOne().where({default: true}).select("-__v");
+};
+
+map.statics.getAll = function() {
   /**
    * Return list of maps by page
    * @return Promise:
    */
-  return this.find().populate('lanes').select("-__v");
+  return this.find().select("-__v");
 };
 
 map.statics.getById = function(_id) {
@@ -54,13 +58,17 @@ map.statics.getDefault = function() {
   return this.findOne({default: true}).select("-__v");
 };
 
+map.statics.getByName = function(name) {
+  return this.findOne({name}).select("-__v");
+};
+
 map.statics.update = async function(obj) {
   /**
    * Update map and return map object
    * @return Promise:
    */
 
-  const _map = await this.findById(obj._id);
+  const _map = await this.findOne({_id: obj._id}).select("-__v");
   if (!_map) return null;
 
   _map.name = obj.name;
@@ -70,14 +78,11 @@ map.statics.update = async function(obj) {
   return _map.save();
 };
 
-map.statics.delById = async function(_id) {
+map.statics.delById = function(_id) {
   /**
    * Remove map by id
    */
-  const item = await this.findById(_id);
-  if (!item) return null;
-
-  return item.remove();
+  return this.deleteOne({_id});
 };
 
 exports.Map = mongoose.model(String(config.get("maps.tableName")), map);

@@ -47,6 +47,14 @@ describe('Map', () => {
     })
   });
 
+  it('should return current map', function () {
+    return Map({name: 'Default map', default: true}).save().then(_map => {
+      return Map.getDefault().then(defaultMap => {
+        return expect(defaultMap.name).toBe(_map.name);
+      })
+    })
+  });
+
   it('should update the map', function () {
     const _map = {...map};
     _map.name = 'New name';
