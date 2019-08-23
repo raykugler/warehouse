@@ -55,9 +55,5 @@ describe('prepareRoutes middleware', () => {
     it('should remove xls property from request', function () {
       expect(req.xls).toBe(undefined);
     });
-
-    it('should add array routes to the request object', function () {
-      expect(req).toHaveProperty('routes', routes);
-    });
   });
 });
