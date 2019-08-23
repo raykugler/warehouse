@@ -1,5 +1,4 @@
 const {Routes} = require('../../models/routes');
-const {Location} = require('../../models/locations');
 const config = require('config');
 
 
