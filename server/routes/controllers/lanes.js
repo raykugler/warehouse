@@ -1,5 +1,4 @@
 const {Lane} = require('../../models/lanes');
-const {Location} = require('../../models/locations');
 const config = require('config');
 
 
@@ -8,7 +7,6 @@ module.exports = {
     /**
      * Returns list of lines
      */
-    await Location.getAllLocations();
     return res.send(await Lane.getAllLanes())
   },
   getById: async (req, res) => {

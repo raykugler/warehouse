@@ -1,22 +1,25 @@
 const router = require("express").Router();
+const config = require('config');
 const xlsx = require('../middleware/uploadXLS');
-const validateRoutes = require('../middleware/validateRoutes');
 const genList = require('../middleware/prepareRoutes');
 const valid = require('../middleware/validateBody');
-const {validateRoutesArray} = require('../models/validation');
+const validateId = require('../middleware/validateId');
+const {validateNewRoute, validateUpdateRoute} = require('../models/validation');
 const controller = require('./controllers/routes');
 
 router.get("/", controller.get);
 
+router.get("/:id", controller.getById);
+
 router.post('/upload', [xlsx, genList], controller.upload);
 
 router.post("/", [
-  validateRoutes,
-  valid(validateRoutesArray, 'routes', 'values')
+  valid(validateNewRoute),
+  validateId(config.get('errors.routes.errc2'))
 ], controller.post);
 
-router.put("/", controller.put);
+router.put("/:id", valid(validateUpdateRoute), controller.put);
 
-router.delete('/', controller.delete);
+router.delete('/:id', controller.delete);
 
 module.exports = router;

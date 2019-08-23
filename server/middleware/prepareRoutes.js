@@ -13,6 +13,11 @@ module.exports = function (req, res, next) {
   if (!headers || headers.length === 0)
     return send(config.get('errors.upload.xlsx.errc4'));
 
+  const headersMap = {
+    'Staging Location': 'stagingLocation',
+    'Route Code': 'routeCode',
+    'DSP': 'dsp'
+  };
 
   req.routes = [];
 
@@ -21,12 +26,9 @@ module.exports = function (req, res, next) {
     const route = {};
 
     for (let j = 0; j < headers.length; j++) {
-      if (list[i][j] !== undefined)
-        route[headers[j]] = list[i][j];
+      if (list[i][j] !== undefined && headersMap[headers[j]])
+        route[headersMap[headers[j]]] = list[i][j];
     }
-
-    route['status'] = 'not started';
-    route['counter'] = 0;
 
     req.routes.push(route);
   }

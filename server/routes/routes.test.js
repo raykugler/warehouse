@@ -90,22 +90,15 @@ describe('routes router', () => {
 
   describe('POST /', () => {
 
-    let routes, response;
-    const query = () => req.post('/').send(routes);
+    let route, response;
+    const query = () => req.post('/').send(route);
 
     beforeAll(async done => {
-      routes = [
-        {
-          stagingLocation: mongoose.Types.ObjectId(),
-          routeCode: 'CX1',
-          dsp: 'TEST'
-        },
-        {
-          stagingLocation: mongoose.Types.ObjectId(),
-          routeCode: 'CV32',
-          dsp: 'DDLP'
-        }
-      ];
+      route = {
+        stagingLocation: mongoose.Types.ObjectId(),
+        routeCode: 'CX1',
+        dsp: 'TEST'
+      };
       response = (await query()).body;
       done();
     });
@@ -115,32 +108,201 @@ describe('routes router', () => {
       done();
     });
 
-    it('should create an array of routes', function () {
-      expect(response.length).toBe(routes.length);
-    });
-
-    it('should contains an id of route', function () {
-      expect(response[0]).toHaveProperty('_id');
+    it('should contains an id of the route', function () {
+      expect(response).toHaveProperty('_id');
     });
 
     it('should contains status property', function () {
-      expect(response[0]).toHaveProperty('status');
+      expect(response).toHaveProperty('status');
     });
 
     it('should contains stagingLocation property', function () {
-      expect(response[0]).toHaveProperty('stagingLocation');
+      expect(response).toHaveProperty('stagingLocation');
     });
 
     it('should contains routeCode property', function () {
-      expect(response[0]).toHaveProperty('routeCode');
+      expect(response).toHaveProperty('routeCode');
     });
 
     it('should contains dsp property property', function () {
-      expect(response[0]).toHaveProperty('dsp');
+      expect(response).toHaveProperty('dsp');
     });
 
     it('should contains date property', function () {
-      expect(response[0]).toHaveProperty('date');
+      expect(response).toHaveProperty('date');
+    });
+
+    it('should return route if it exists', function () {
+      return query().then(res => {
+        // console.log(res)
+      })
+    });
+  });
+
+  describe('PUT /:id', () => {
+
+    let route, response, url;
+
+    const query = () => req.put(url).send(route);
+
+    describe('if conflict of routeCode', () => {
+      let conflictRouteCode = 'conflictRouteCode', conflictRoute;
+
+      beforeAll(async done => {
+        conflictRoute = await Routes({
+          stagingLocation: mongoose.Types.ObjectId(),
+          routeCode: conflictRouteCode,
+          dsp: 'Test DSP'
+        }).save();
+        route = await Routes({
+          stagingLocation: mongoose.Types.ObjectId(),
+          routeCode: 'CX205',
+          dsp: 'Test DSP'
+        }).save();
+
+        route.routeCode = conflictRouteCode;
+
+        url = `/${route._id}`;
+
+        response = await query();
+        done();
+      });
+
+      afterAll(async () => {
+        await conflictRoute.delete();
+        await route.delete();
+        url = null;
+        response = null;
+      });
+
+      it('should return status code 400', function () {
+        expect(response.status).toBe(400);
+      });
+
+      it('should contains an error', function () {
+        expect(response.body).toHaveProperty('error',
+          config.get('errors.routes.errc6'));
+      });
+    });
+
+    describe('if route do not exist', () => {
+
+      beforeAll(async () => {
+        // Create but don't store route to database
+        route = await Routes({
+          stagingLocation: mongoose.Types.ObjectId(),
+          routeCode: 'CT24',
+          dsp: 'Test'
+        });
+        url = `/${route._id}`;
+        response = await query();
+      });
+
+      afterAll(() => {
+        url = null;
+        route = null;
+        response = null;
+      });
+
+      it('should return status code 400', function () {
+        expect(response.status).toBe(400);
+      });
+
+      it('should contains an error', function () {
+        expect(response.body).toHaveProperty('error',
+          config.get('errors.routes.errc3'));
+      });
+    });
+
+    describe('if route data is valid', () => {
+
+      beforeAll(async () => {
+        route = await Routes({
+          stagingLocation: mongoose.Types.ObjectId(),
+          routeCode: 'CV88',
+          dsp: 'Test update dsp'
+        }).save();
+
+        route.stagingLocation = mongoose.Types.ObjectId();
+        route.routeCode = 'CT100';
+        route.dsp = 'new dsp';
+        route.counter = 0;
+        route.status = 'New status';
+
+        url = `/${route._id}`;
+        response = await query();
+      });
+
+      afterAll(async () => {
+        await route.delete();
+        response = null;
+        url = null;
+      });
+
+      it('should return status code 200', function () {
+        expect(response.status).toBe(200);
+      });
+
+      it('should contains id', function () {
+        expect(response.body).toHaveProperty('_id', String(route._id));
+      });
+
+      it('should contains stagingLocation', function () {
+        expect(response.body).toHaveProperty('stagingLocation',
+          String(route.stagingLocation));
+      });
+
+      it('should contains dsp property', function () {
+        expect(response.body).toHaveProperty('dsp', route.dsp);
+      });
+
+      it('should contains routeCode property', function () {
+        expect(response.body).toHaveProperty('routeCode', route.routeCode);
+      });
+
+      it('should contains counter property', function () {
+        expect(response.body).toHaveProperty('counter', route.counter);
+      });
+
+      it('should contains status property', function () {
+        expect(response.body).toHaveProperty('status', route.status);
+      });
+    });
+  });
+
+  describe('DELETE /:id', () => {
+
+    let route, response, url;
+    const query = () => req.delete(url);
+
+    beforeAll(async () => {
+      route = await Routes({
+        stagingLocation: mongoose.Types.ObjectId(),
+        routeCode: 'CT82',
+        dsp: 'Test delete'
+      }).save();
+
+      url = `/${route._id}`;
+
+      response = await query();
+    });
+
+    afterAll(async () => {
+      await route.delete();
+      url = null;
+      response = null;
+    });
+
+    it('should return status code 200', function () {
+      expect(response.status).toBe(200);
+    });
+
+    it('should contains ok property', function () {
+      expect(response.body).toHaveProperty('ok', 1);
+    });
+
+    it('should contains deletedCount property', function () {
+      expect(response.body).toHaveProperty('deletedCount', 1);
     });
   });
 });
