@@ -7,7 +7,14 @@
     "hashRounds": 10
   },
   "users": {
-    "returns": ["_id", "firstName", "lastName", "email", "phone", "su"],
+    "returns": [
+      "_id",
+      "firstName",
+      "lastName",
+      "email",
+      "phone",
+      "su"
+    ],
     "tableName": "User",
     "firstName": {
       "min": 2,
@@ -39,7 +46,78 @@
       "max": 1024
     }
   },
+  "maps": {
+    "tableName": "Map",
+    "name": {
+      "min": 2,
+      "max": 30
+    }
+  },
+  "locations": {
+    "tableName": "Location"
+  },
   "routes": {
-    "tableName": "Routes"
+    "tableName": "Route",
+    "expires": 36000
+  },
+  "lanes": {
+    "tableName": "Lane",
+    "name": {
+      "min": 2,
+      "max": 30
+    }
+  },
+  "configs": {
+    "fileUpload": {
+      "limits": {
+        "files": 1,
+        "fileSize": 5242880
+      }
+    },
+    "urlencoded": {
+      "limit": "50mb",
+      "extended": true
+    },
+    "json": {
+      "limit": "50mb"
+    },
+    "xlsx": {
+      "type": "buffer",
+      "row": true
+    }
+  },
+  "errors": {
+    "maps": {
+      "errc1": "You don't have default map",
+      "errc2": "Cannot find the map with given id",
+      "errc3": "URI id and map id doesn't match",
+      "errc4": "The map name already registered"
+    },
+    "lanes": {
+      "errc1": "Cannot find the lane with given id",
+      "errc2": "URI id and lane id doesn't match",
+      "errc3": "Lane with given name already exists"
+    },
+    "locations": {
+      "errc1": "Cannot find the location with given id",
+      "errc2": "URI id and location id doesn't match",
+      "errc3": "This stagingLocation already registered"
+    },
+    "routes": {
+      "errc1": "For upload the data use /routes/upload",
+      "errc2": "URI id and route id doesn't match",
+      "errc3": "Cannot found this route",
+      "errc4": "Request has empty body",
+      "errc5": "Routes should be or an array or an object",
+      "errc6": "This routeCode already registered"
+    },
+    "upload": {
+      "xlsx": {
+        "errc1": "Cannot find name routes",
+        "errc2": "The file has the wrong format",
+        "errc3": "Cannot retrieve a first sheet",
+        "errc4": "Cannot read the headers"
+      }
+    }
   }
 }
